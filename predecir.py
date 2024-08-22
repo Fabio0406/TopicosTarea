@@ -35,4 +35,4 @@ def predict(file):
     return predicted_class, confidence
 
 # Prueba con una imagen
-predict('./Prueba/auto2.jpg')
+predict('./Prueba/auto4.jpg')

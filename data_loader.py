@@ -1,36 +1,33 @@
-import sys
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import os
-from config import data_entrenamiento, data_validacion, longitud, altura, batch_size
+from config import data_entrenamiento, data_validacion, longitud, altura, batch_size, steps_per_epoch, validation_steps
 
 class DataLoader:
     def __init__(self):
+        # Inicializa el generador de datos para el entrenamiento con aumento de datos
         self.train_datagen = ImageDataGenerator(
-            rescale=1. / 255,
-            shear_range=0.2,
-            zoom_range=0.2,
-            horizontal_flip=True)
+            rescale=1. / 255, 
+            shear_range=0.2,  
+            zoom_range=0.2,  
+            horizontal_flip=True)  
 
-        self.test_datagen = ImageDataGenerator(rescale=1. / 255)
+        # Inicializa el generador de datos para la validación sin aumento de datos
+        self.test_datagen = ImageDataGenerator(rescale=1. / 255)  
 
     def load_data(self):
+        # Crea un generador de datos para el conjunto de entrenamiento
         train_generator = self.train_datagen.flow_from_directory(
-            data_entrenamiento,
-            target_size=(altura, longitud),
-            batch_size=batch_size,
+            data_entrenamiento,  
+            target_size=(altura, longitud),  
+            batch_size=batch_size, 
             class_mode='categorical')
 
+        # Crea un generador de datos para el conjunto de validación
         validation_generator = self.test_datagen.flow_from_directory(
             data_validacion,
             target_size=(altura, longitud),
             batch_size=batch_size,
             class_mode='categorical')
 
-        # Contar el número total de imágenes en el directorio de entrenamiento
-        total_train_images = sum([len(files) for _, _, files in os.listdir(data_entrenamiento)])
-        total_val_images = sum([len(files) for _, _, files in os.listdir(data_validacion)])
-
-        steps_per_epoch = total_train_images // batch_size
-        validation_steps = total_val_images // batch_size
-
+        # Devuelve los generadores de datos y los pasos calculados
         return train_generator, validation_generator, steps_per_epoch, validation_steps
