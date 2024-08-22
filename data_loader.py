@@ -1,4 +1,3 @@
-# data_loader.py
 import sys
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import os
@@ -27,7 +26,11 @@ class DataLoader:
             batch_size=batch_size,
             class_mode='categorical')
 
-        steps_per_epoch = len(os.listdir(data_entrenamiento))
-        validation_steps = len(os.listdir(data_validacion))
+        # Contar el número total de imágenes en el directorio de entrenamiento
+        total_train_images = sum([len(files) for _, _, files in os.listdir(data_entrenamiento)])
+        total_val_images = sum([len(files) for _, _, files in os.listdir(data_validacion)])
+
+        steps_per_epoch = total_train_images // batch_size
+        validation_steps = total_val_images // batch_size
 
         return train_generator, validation_generator, steps_per_epoch, validation_steps
